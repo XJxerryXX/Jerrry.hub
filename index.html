@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <title>Jerry.hub</title>
+    <link rel="icon" type="image/x-icon" href="https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/882d3d5d-8978-4e18-ac45-c1ae8b4cc7ab/dikh46b-296cfa4e-8379-4ac0-8de5-f3887d3a5ff1.png/v1/fill/w_894,h_894,q_70,strp/untitled_by_adyswear_dikh46b-pre.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9MTI4MCIsInBhdGgiOiJcL2ZcLzg4MmQzZDVkLTg5NzgtNGUxOC1hYzQ1LWMxYWU4YjRjYzdhYlwvZGlraDQ2Yi0yOTZjZmE0ZS04Mzc5LTRhYzAtOGRlNS1mMzg4N2QzYTVmZjEucG5nIiwid2lkdGgiOiI8PTEyODAifV1dLCJhdWQiOlsidXJuOnNlcnZpY2U6aW1hZ2Uub3BlcmF0aW9ucyJdfQ.69tcaFZnc0_yWF-jR5k17c6grWcwODfLNdfhlYo2Gy0">
     <style>
         body {
             margin: 0;
             height: 100vh;
-            background: linear-gradient(45deg, rgba(255, 0, 0, 1), rgba(0, 255, 255, 1), rgba(255, 255, 0, 1));
+            background: linear-gradient(45deg, rgb(15, 1, 125), rgb(255, 0, 68), rgb(98, 0, 255));
             background-size: 400% 400%;
             animation: backgroundMotion 10s ease infinite;
             color: white;
@@ -75,11 +76,15 @@
             margin: 0;
             font-size: 4rem;
             color: transparent;
-            background: linear-gradient(90deg, #333, #666, #999, #ccc, #fff);
+            background: linear-gradient(90deg, #ffffff, #ababab, #999, #ccc, #fff);
             -webkit-background-clip: text;
             transition: transform 0.1s ease, background-position 0.2s ease;
             position: relative;
             background-size: 200%;
+            text-shadow: 1px 10px 5px rgba(106, 104, 104, 0.3);
+            text-shadow: 5px 5x 10px rgba(0, 0, 0, 0.4);
+            
+            
         }
 
         .instagram-icon {
@@ -183,8 +188,25 @@
                 const photoYMove = (y / height - 0.5) * 30;
                 photo.style.transform = `translate(${photoXMove}px, ${photoYMove}px)`;
             //Co sis myslel že najdeš??.... nic tu není !
-
             
+            document.addEventListener('mousemove', (e) => {
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+    const x = e.clientX;
+    const y = e.clientY;
+
+    // Pohyb pro Instagram ikonu
+    const instagramIcon = document.querySelector('.instagram-icon');
+    if (instagramIcon) {
+        const iconXMove = (x / width - 0.5) * 30;
+        const iconYMove = (y / height - 0.5) * 30;
+        instagramIcon.style.transform = `translate(${iconXMove}px, ${iconYMove}px)`;
+    
+    
+    }
+});
+
+           
             
             });
         });
