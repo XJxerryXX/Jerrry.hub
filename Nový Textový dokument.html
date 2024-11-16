@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <title>Jerry.hub</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            background: linear-gradient(45deg, rgba(255, 0, 0, 1), rgba(0, 255, 255, 1), rgba(255, 255, 0, 1));
+            background-size: 400% 400%;
+            animation: backgroundMotion 10s ease infinite;
+            color: white;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative; 
+        }
+
+        @keyframes backgroundMotion {
+            0% {
+                background-position: 0% 50%;
+            }
+            25% {
+                background-position: 100% 50%;
+            }
+            50% {
+                background-position: 50% 100%;
+            }
+            75% {
+                background-position: 100% 0%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+       
+        .dot-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none; 
+        }
+
+        .dot {
+            position: absolute;
+            top: -10px;
+            width: 10px;
+            height: 10px;
+            background-color: white;
+            border-radius: 50%;
+            animation: fall linear infinite;
+            opacity: 0.8;
+        }
+
+        @keyframes fall {
+            0% {
+                top: -10px;
+                opacity: 0.8;
+            }
+            100% {
+                top: 100vh;
+                opacity: 0;
+            }
+        }
+
+        .nadpis-text h1 {
+            font-family: "Arial Black", sans-serif;
+            margin: 0;
+            font-size: 4rem;
+            color: transparent;
+            background: linear-gradient(90deg, #333, #666, #999, #ccc, #fff);
+            -webkit-background-clip: text;
+            transition: transform 0.1s ease, background-position 0.2s ease;
+            position: relative;
+            background-size: 200%;
+        }
+
+        .instagram-icon {
+            margin-top: 20px;
+            width: 50px;
+            height: 50px;
+        }
+
+        .photos {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr); 
+            gap: 20px;
+            margin-top: 40px;
+            width: 80%; 
+
+        .photo {
+            width: 100%; 
+            height: 150px; 
+            border-radius: 10px;
+            object-fit: cover; 
+            position: relative;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5); 
+            transition: transform 0.1s ease;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="nadpis-text">
+        <h1 id="text">Vítej!</h1>
+    </div>
+
+    
+    <div class="dot-container" id="dot-container"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            const dotCount = 100;
+
+            
+            function generateDots() {
+                const container = document.getElementById('dot-container');
+
+                for (let i = 0; i < dotCount; i++) {
+                    const dot = document.createElement('div');
+                    dot.classList.add('dot');
+
+                    
+                    dot.style.left = `${Math.random() * 100}vw`; 
+
+                    
+                    dot.style.animationDuration = `${Math.random() * 3 + 2}s`; 
+                    
+                    dot.style.animationDelay = `${Math.random() * 2}s`; 
+
+                    container.appendChild(dot);
+                }
+            }
+
+            generateDots();
+        });
+    </script>
+
+    
+    <a href="https://www.instagram.com/jerrry_graphic/" target="_blank">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" alt="Instagram" class="instagram-icon">
+    </a>
+
+    
+    <div class="photos">
+        
+        <img src="https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/882d3d5d-8978-4e18-ac45-c1ae8b4cc7ab/dhsf6wm-ce2acbca-75ac-42c4-bc43-b935ea3f11e1.png/v1/fit/w_400,h_400,q_70,strp/fragments_of_time_by_adyswear_dhsf6wm-375w-2x.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzg4MmQzZDVkLTg5NzgtNGUxOC1hYzQ1LWMxYWU4YjRjYzdhYlwvZGhzZjZ3bS1jZTJhY2JjYS03NWFjLTQyYzQtYmM0My1iOTM1ZWEzZjExZTEucG5nIiwiaGVpZ2h0IjoiPD00MDAiLCJ3aWR0aCI6Ijw9NDAwIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmltYWdlLndhdGVybWFyayJdLCJ3bWsiOnsicGF0aCI6Ilwvd21cLzg4MmQzZDVkLTg5NzgtNGUxOC1hYzQ1LWMxYWU4YjRjYzdhYlwvYWR5c3dlYXItNC5wbmciLCJvcGFjaXR5Ijo5NSwicHJvcG9ydGlvbnMiOjAuNDUsImdyYXZpdHkiOiJjZW50ZXIifX0.-FmZsX24xt9wbL65JEcuF7bKyKuFQQ_LzA8XIjN2nTk" alt="Foto 1" class="photo">
+        <img src="https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/882d3d5d-8978-4e18-ac45-c1ae8b4cc7ab/dhbkbji-ae28ffac-c50c-4b9a-95ee-0d279ed6b5c0.png/v1/fill/w_774,h_1032,q_70,strp/1382891_3z_by_adyswear_dhbkbji-pre.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9MTcwNyIsInBhdGgiOiJcL2ZcLzg4MmQzZDVkLTg5NzgtNGUxOC1hYzQ1LWMxYWU4YjRjYzdhYlwvZGhia2JqaS1hZTI4ZmZhYy1jNTBjLTRiOWEtOTVlZS0wZDI3OWVkNmI1YzAucG5nIiwid2lkdGgiOiI8PTEyODAifV1dLCJhdWQiOlsidXJuOnNlcnZpY2U6aW1hZ2Uub3BlcmF0aW9ucyJdfQ.3LAvkE_I7GsY4XZUUjJkBOiFbDJvDoENSz9O3n9bSQ8" alt="Foto 2" class="photo">
+        <img src="https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/882d3d5d-8978-4e18-ac45-c1ae8b4cc7ab/dgj0b89-a7683143-8f7c-4a99-b2e1-a4db2cdad33c.png/v1/fill/w_847,h_838,q_80,strp/slow_progress_by_adyswear_dgj0b89-fullview.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9ODM4IiwicGF0aCI6IlwvZlwvODgyZDNkNWQtODk3OC00ZTE4LWFjNDUtYzFhZThiNGNjN2FiXC9kZ2owYjg5LWE3NjgzMTQzLThmN2MtNGE5OS1iMmUxLWE0ZGIyY2RhZDMzYy5wbmciLCJ3aWR0aCI6Ijw9ODQ3In1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmltYWdlLm9wZXJhdGlvbnMiXX0.XMSyIR40f6ZIAOOaa1mYRXtkZj41DwBnOs4BHnvd_OI" alt="Foto 3" class="photo">
+        <img src="https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/882d3d5d-8978-4e18-ac45-c1ae8b4cc7ab/dgiw541-91084600-efe8-47a0-9355-ac2f0d68fe4b.png/v1/fill/w_834,h_835,q_80,strp/devilcry_by_adyswear_dgiw541-fullview.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9ODM1IiwicGF0aCI6IlwvZlwvODgyZDNkNWQtODk3OC00ZTE4LWFjNDUtYzFhZThiNGNjN2FiXC9kZ2l3NTQxLTkxMDg0NjAwLWVmZTgtNDdhMC05MzU1LWFjMmYwZDY4ZmU0Yi5wbmciLCJ3aWR0aCI6Ijw9ODM0In1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmltYWdlLm9wZXJhdGlvbnMiXX0.13jeIiNrFbYIY5dUirHLYvpapPj8CmMiig5COSivMAQ" alt="Foto 4" class="photo">
+        <img src="https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/882d3d5d-8978-4e18-ac45-c1ae8b4cc7ab/dgiw4v9-07eacc8b-2738-43bf-b1bc-2abec90d9a2e.png/v1/fit/w_689,h_690,q_70,strp/flowerfly_by_adyswear_dgiw4v9-375w-2x.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9NjkwIiwicGF0aCI6IlwvZlwvODgyZDNkNWQtODk3OC00ZTE4LWFjNDUtYzFhZThiNGNjN2FiXC9kZ2l3NHY5LTA3ZWFjYzhiLTI3MzgtNDNiZi1iMWJjLTJhYmVjOTBkOWEyZS5wbmciLCJ3aWR0aCI6Ijw9Njg5In1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmltYWdlLm9wZXJhdGlvbnMiXX0.8yPqjJp8yEsD5tb9oNGkyycfpZCl7g6ZU4Csqt-0pVg" alt="Foto 5" class="photo">
+        <img src="https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/882d3d5d-8978-4e18-ac45-c1ae8b4cc7ab/dgiw50e-2fbd58ac-eadf-4987-aaee-828d0e69d3d4.png/v1/fit/w_693,h_687,q_70,strp/emptiness_by_adyswear_dgiw50e-375w-2x.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9Njg3IiwicGF0aCI6IlwvZlwvODgyZDNkNWQtODk3OC00ZTE4LWFjNDUtYzFhZThiNGNjN2FiXC9kZ2l3NTBlLTJmYmQ1OGFjLWVhZGYtNDk4Ny1hYWVlLTgyOGQwZTY5ZDNkNC5wbmciLCJ3aWR0aCI6Ijw9NjkzIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmltYWdlLm9wZXJhdGlvbnMiXX0.GEbjeSAL709uBb9Y_zjoSm8Tlm26ob-9gLjwyFQ9mkM" alt="Foto 6" class="photo">
+        <img src="https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/882d3d5d-8978-4e18-ac45-c1ae8b4cc7ab/dikcj6i-ef4eb758-a2be-41e7-b2f2-24f21e4f6eed.png/v1/fill/w_854,h_840,q_80,strp/they_are_alive_by_adyswear_dikcj6i-fullview.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9ODQwIiwicGF0aCI6IlwvZlwvODgyZDNkNWQtODk3OC00ZTE4LWFjNDUtYzFhZThiNGNjN2FiXC9kaWtjajZpLWVmNGViNzU4LWEyYmUtNDFlNy1iMmYyLTI0ZjIxZTRmNmVlZC5wbmciLCJ3aWR0aCI6Ijw9ODU0In1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmltYWdlLm9wZXJhdGlvbnMiXX0.XjzTaNILM2hbyGKPeCdNGTEz3QNLYwhdBLSXwD5dIto" alt="Foto 7" class="photo">
+        <img src="https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/882d3d5d-8978-4e18-ac45-c1ae8b4cc7ab/dgiw59j-ba897385-17e0-4c1d-9971-61864ae43af0.png/v1/fill/w_1038,h_591,q_80,strp/lonely_by_adyswear_dgiw59j-fullview.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9NTkxIiwicGF0aCI6IlwvZlwvODgyZDNkNWQtODk3OC00ZTE4LWFjNDUtYzFhZThiNGNjN2FiXC9kZ2l3NTlqLWJhODk3Mzg1LTE3ZTAtNGMxZC05OTcxLTYxODY0YWU0M2FmMC5wbmciLCJ3aWR0aCI6Ijw9MTAzOCJ9XV0sImF1ZCI6WyJ1cm46c2VydmljZTppbWFnZS5vcGVyYXRpb25zIl19.bL0BQpM3pLuEJi8LOoEe0CibrUTYS0GWAgebt1RQc9c" alt="Foto 8" class="photo">
+        <img src="https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/882d3d5d-8978-4e18-ac45-c1ae8b4cc7ab/dgiw4ox-3cb9ba70-21f6-427f-940a-cac6af054988.png/v1/fit/w_594,h_587,q_70,strp/waving_by_adyswear_dgiw4ox-375w-2x.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9NTg3IiwicGF0aCI6IlwvZlwvODgyZDNkNWQtODk3OC00ZTE4LWFjNDUtYzFhZThiNGNjN2FiXC9kZ2l3NG94LTNjYjliYTcwLTIxZjYtNDI3Zi05NDBhLWNhYzZhZjA1NDk4OC5wbmciLCJ3aWR0aCI6Ijw9NTk0In1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmltYWdlLm9wZXJhdGlvbnMiXX0.GxUreT2nfIrcgGNFmWX9XztmmK8HADtH7j1z6dPjFr0" alt="Foto 9" class="photo">
+        <img src="https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/882d3d5d-8978-4e18-ac45-c1ae8b4cc7ab/dgiw4y8-9860ac9c-1e8c-4bbd-8f2e-988878bbaaa5.png/v1/fill/w_841,h_839,q_80,strp/dreamings_by_adyswear_dgiw4y8-fullview.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9ODM5IiwicGF0aCI6IlwvZlwvODgyZDNkNWQtODk3OC00ZTE4LWFjNDUtYzFhZThiNGNjN2FiXC9kZ2l3NHk4LTk4NjBhYzljLTFlOGMtNGJiZC04ZjJlLTk4ODg3OGJiYWFhNS5wbmciLCJ3aWR0aCI6Ijw9ODQxIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmltYWdlLm9wZXJhdGlvbnMiXX0.HjlBxVZHAnQP0Ey3HZe4zwJi0Oe9KKPSyx-p65pVYAo" alt="Foto 10" class="photo">
+    </div>
+
+    <script>
+        const text = document.getElementById('text');
+        const moveRange = 50; 
+
+        document.addEventListener('mousemove', (e) => {
+            const { offsetWidth: width, offsetHeight: height } = document.body;
+            const { clientX: x, clientY: y } = e;
+
+            
+            const xMove = (x / width - 0.5) * moveRange;
+            const yMove = (y / height - 0.5) * moveRange;
+            text.style.transform = `translate(${xMove}px, ${yMove}px)`;
+
+            
+            document.querySelectorAll('.photo').forEach(photo => {
+                const photoXMove = (x / width - 0.5) * 30;
+                const photoYMove = (y / height - 0.5) * 30;
+                photo.style.transform = `translate(${photoXMove}px, ${photoYMove}px)`;
+            //Co sis myslel že najdeš??.... nic tu není !
+
+            
+            
+            });
+        });
+    </script>
+</body>
+</html>
