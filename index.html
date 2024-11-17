@@ -76,13 +76,13 @@
             margin: 0;
             font-size: 4rem;
             color: transparent;
-            background: linear-gradient(90deg, #ffffff, #ababab, #999, #ccc, #fff);
+            background: linear-gradient(90deg, #d5d5d5, #cac6c6, #949494, #ccc, #fff);
             -webkit-background-clip: text;
             transition: transform 0.1s ease, background-position 0.2s ease;
             position: relative;
             background-size: 200%;
-            text-shadow: 1px 10px 5px rgba(106, 104, 104, 0.3);
-            text-shadow: 5px 5x 10px rgba(0, 0, 0, 0.4);
+            text-shadow: 1px 10px 10px rgba(106, 104, 104, 0.3);
+            
             
             
         }
@@ -91,42 +91,27 @@
 .nadpis-text h2 {
     font-family: "Arial Black", sans-serif;
     margin: 0;
-    font-size: 10px;
-    top: 3800%;
+    font-size: 8.5464321px;
+    top: 4780%;
     color: transparent;
     background: linear-gradient(90deg, #ffffff, #c7c7c7, #ffffff, #ffffff, #fff);
     -webkit-background-clip: text;
     transition: transform 0.1s ease, background-position 0.2s ease;
     position: relative;
     background-size: 200%;
-    text-shadow: 1px 10px 5px rgba(106, 104, 104, 0.3);
-    text-shadow: 5px 5x 10px rgba(0, 0, 0, 0.4);
+    text-shadow: 20px 15x 65px rgba(106, 104, 104, 0.3);
     
     
 }
 
 
 
-.nadpis-text h3 {
-    font-family: "Arial Black", sans-serif;
-    margin: 0;
-    font-size: 20px;
-    color: transparent;
-    background: linear-gradient(90deg, #c8abab, #eae0e0, #818181, #6b6a6a, #fff);
-    -webkit-background-clip: text;
-    transition: transform 0.1s ease, background-position 0.2s ease;
-    position: relative;
-    background-size: 200%;
-    text-shadow: 1px 10px 5px rgba(106, 104, 104, 0.3);
-    text-shadow: 5px 5x 10px rgba(0, 0, 0, 0.4);
-    
-    
-}
 
         .instagram-icon {
             margin-top: 20px;
-            width: 50px;
-            height: 50px;
+            width: 65px;
+            height: 65px;
+            
         }
 
         .photos {
@@ -167,13 +152,16 @@
 </style>
 </head>
 <body>
+    
 
     <div class="nadpis-text">
         
         
     </div>
 
-    
+    <div class="nadpis-text">
+        <center>
+    </div>
     <div class="dot-container" id="dot-container"></div>
 
     <script>
@@ -289,14 +277,14 @@
             const { clientX: x, clientY: y } = e;
     
             // Pohyb text
-            const xMove = (x / width - 0.5) * moveRange;
-            const yMove = (y / height - 0.5) * moveRange;
+            const xMove = (x / width - 0.2) * 30; moveRange;
+            const yMove = (y / height - 0.2) * 30; moveRange;
             text.style.transform = `translate(${xMove}px, ${yMove}px)`;
     
             // .photo
             document.querySelectorAll('.photo').forEach(photo => {
-                const photoXMove = (x / width - 0.5) * 30;
-                const photoYMove = (y / height - 0.5) * 30;
+                const photoXMove = (x / width - 0.) * 25;
+                const photoYMove = (y / height - 0.1) * 25;
                 photo.style.transform = `translate(${photoXMove}px, ${photoYMove}px)`;
             });
     
