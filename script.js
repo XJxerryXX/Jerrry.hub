@@ -14,3 +14,6 @@ function zmenGradient() {
 function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
+
+// Změna pozadí každých 5 sekund
+setInterval(zmenGradient, 5000);
