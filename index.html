@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="cs">
 <head>
+   <!DOCTYPE html>
+<html lang="cs">
+<head>
     <meta charset="UTF-8">
     <title>Jerry.hub</title>
-    <link rel="icon" type="image/x-icon" href="https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/882d3d5d-8978-4e18-ac45-c1ae8b4cc7ab/dikh46b-296cfa4e-8379-4ac0-8de5-f3887d3a5ff1.png/v1/fill/w_894,h_894,q_70,strp/untitled_by_adyswear_dikh46b-pre.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9MTI4MCIsInBhdGgiOiJcL2ZcLzg4MmQzZDVkLTg5NzgtNGUxOC1hYzQ1LWMxYWU4YjRjYzdhYlwvZGlraDQ2Yi0yOTZjZmE0ZS04Mzc5LTRhYzAtOGRlNS1mMzg4N2QzYTVmZjEucG5nIiwid2lkdGgiOiI8PTEyODAifV1dLCJhdWQiOlsidXJuOnNlcnZpY2U6aW1hZ2Uub3BlcmF0aW9ucyJdfQ.69tcaFZnc0_yWF-jR5k17c6grWcwODfLNdfhlYo2Gy0">
+    <link rel="icon" type="image/x-icon" href="https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/882d3d5d-8978-4e18-ac45-c1ae8b4cc7ab/dikh46b-296cfa4e-8379-4ac0-8de5-f3887d3a5ff1.png/v1/fill/w_894,h_894,q_70,strp/untitled_by_adyswear_dikh46b-pre.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9jaiI6W1t7ImhlaWdodCI6Ijw9MTI4MCIsInBhdGgiOiJcL2ZcLzg4MmQzZDVkLTg5NzgtNGUxOC1hYzQ1LWMxYWU4YjRjYzdhYlwvZGlraDQ2Yi0yOTZjZmE0ZS04Mzc5LTRhYzAtOGRlNS1mMzg4N2QzYTVmZjEucG5nIiwid2lkdGgiOiI8PTEyODAifV1dLCJhdWQiOlsidXJuOnNlcnZpY2U6aW1hZ2Uub3BlcmF0aW9ucyJdfQ.69tcaFZnc0_yWF-jR5k17c6grWcwODfLNdfhlYo2Gy0">
     <style>
-    
         body {
             margin: 0;
             height: 100vh;
@@ -39,7 +41,36 @@
                 background-position: 0% 50%;
             }
         }
+    </style>
+</head>
+<body>
+    <div>
+        <h1>Vítejte na Jerry.hub!</h1>
+    </div>
 
+    <script>
+        // Funkce pro změnu pozadí
+        function zmenGradient() {
+            // Získání těla dokumentu (celého HTML)
+            const body = document.body;
+
+            // Definice nových barev pro gradient
+            const novyGradient = `linear-gradient(45deg, rgb(${getRandomInt(0, 255)}, ${getRandomInt(0, 255)}, ${getRandomInt(0, 255)}), rgb(${getRandomInt(0, 255)}, ${getRandomInt(0, 255)}, ${getRandomInt(0, 255)}), rgb(${getRandomInt(0, 255)}, ${getRandomInt(0, 255)}, ${getRandomInt(0, 255)}))`;
+
+            // Nastavení nového pozadí
+            body.style.background = novyGradient;
+        }
+
+        // Funkce pro generování náhodného čísla mezi min a max
+        function getRandomInt(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        // Změna pozadí každých 5 sekund
+        setInterval(zmenGradient, 5000);
+    </script>
+</body>
+</html>
        
         .dot-container {
             position: absolute;
