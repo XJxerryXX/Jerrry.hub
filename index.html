@@ -397,26 +397,25 @@
     </div>
 
     <script>
-        // Create and show mobile popup
+        // Mobile device detection and popup
         if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-            const popup = document.createElement('div');
-            popup.style.position = 'fixed';
-            popup.style.top = '20px';
-            popup.style.left = '50%';
-            popup.style.transform = 'translateX(-50%)';
-            popup.style.backgroundColor = 'rgba(0,0,0,0.8)';
-            popup.style.color = 'white';
-            popup.style.padding = '15px 20px';
-            popup.style.borderRadius = '8px';
-            popup.style.zIndex = '9999';
-            popup.style.textAlign = 'center';
-            popup.innerText = 'Lepší požitek z této stránky budete mít na počítači';
-            
-            // Make sure popup is added after DOM is fully loaded
             document.addEventListener('DOMContentLoaded', () => {
-                document.body.appendChild(popup);
+                const popup = document.createElement('div');
+                Object.assign(popup.style, {
+                    position: 'fixed',
+                    top: '20px',
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    backgroundColor: 'rgba(0,0,0,0.8)',
+                    color: 'white',
+                    padding: '15px 20px',
+                    borderRadius: '8px',
+                    zIndex: '9999',
+                    textAlign: 'center'
+                });
+                popup.innerText = 'Lepší požitek z této stránky budete mít na počítači';
                 
-                // Hide popup after 5 seconds
+                document.body.appendChild(popup);
                 setTimeout(() => {
                     popup.style.transition = 'opacity 0.5s';
                     popup.style.opacity = '0';
@@ -425,84 +424,73 @@
             });
         }
 
-        // Get text element
+        // Movement tracking variables
         let textElement = document.getElementById('text');
-        const moveRangeValue = 50;
-        let lastX = 0;
-        let lastY = 0;
-        const smoothingFactor = 0.15; // Controls smoothing (0-1)
+        const moveRangeValue = 25; // Reduced range for more stability
+        let lastX = window.innerWidth / 2;
+        let lastY = window.innerHeight / 2;
+        const smoothingFactor = 0.08; // Reduced for more stability
 
+        // Smooth interpolation
         function lerp(start, end, factor) {
             return start + (end - start) * factor;
         }
 
+        // Main orientation handler with improved stability
         function handleDeviceOrientation(beta, gamma) {
-            const { offsetWidth: width, offsetHeight: height } = document.body;
-            
-            // Get updated text element in case it was dynamically added
+            const width = window.innerWidth;
+            const height = window.innerHeight;
             textElement = document.getElementById('text');
 
-            // Calculate movement based on device tilt with bounds checking
-            const gammaClamped = Math.max(-90, Math.min(90, gamma));
-            const betaClamped = Math.max(-180, Math.min(180, beta));
+            // Clamp values with tighter bounds for more stability
+            const gammaClamped = Math.max(-45, Math.min(45, gamma));
+            const betaClamped = Math.max(-45, Math.min(45, beta));
             
-            const x = (gammaClamped / 90) * width + width / 2;
-            const y = (betaClamped / 180) * height + height / 2;
+            // Calculate position with reduced sensitivity
+            const x = (gammaClamped / 45) * width + width / 2;
+            const y = (betaClamped / 45) * height + height / 2;
 
-            // Smooth out the movement using lerp
+            // Apply stronger smoothing
             lastX = lerp(lastX, x, smoothingFactor);
             lastY = lerp(lastY, y, smoothingFactor);
 
-            // Move text element with smooth transition
+            // Move text with reduced range
             if (textElement) {
                 const xMove = (lastX / width - 0.5) * moveRangeValue;
                 const yMove = (lastY / height - 0.5) * moveRangeValue;
                 textElement.style.transform = `translate(${-xMove}px, ${-yMove}px)`;
             }
 
-            // Move images with parallax effect
+            // Move images with reduced parallax effect
             document.querySelectorAll('img, .photo').forEach((image, index) => {
-                if (!image) return; // Skip if element is no longer in DOM
-                
-                const depth = 1 + (index * 0.1); // Creates depth effect
-                const imageXMove = (lastX / width - 0.5) * 25 * depth;
-                const imageYMove = (lastY / height - 0.5) * 25 * depth;
+                if (!image) return;
+                const depth = 1 + (index * 0.05); // Reduced depth effect
+                const imageXMove = (lastX / width - 0.5) * 15 * depth; // Reduced movement
+                const imageYMove = (lastY / height - 0.5) * 15 * depth;
                 image.style.transform = `translate(${-imageXMove}px, ${-imageYMove}px)`;
             });
         }
 
-        // Throttle function with proper timing
-        function throttle(func, limit) {
-            let lastFunc;
-            let lastRan;
-            return function(...args) {
-                if (!lastRan) {
+        // Improved throttle function
+        const throttle = (func, limit) => {
+            let inThrottle;
+            return (...args) => {
+                if (!inThrottle) {
                     func.apply(this, args);
-                    lastRan = Date.now();
-                } else {
-                    clearTimeout(lastFunc);
-                    lastFunc = setTimeout(() => {
-                        if ((Date.now() - lastRan) >= limit) {
-                            func.apply(this, args);
-                            lastRan = Date.now();
-                        }
-                    }, limit - (Date.now() - lastRan));
+                    inThrottle = true;
+                    setTimeout(() => inThrottle = false, limit);
                 }
             }
         }
 
-        // Throttled handle orientation function
-        const throttledHandleOrientation = throttle((beta, gamma) => {
-            requestAnimationFrame(() => {
-                handleDeviceOrientation(beta, gamma);
-            });
-        }, 16); // ~60fps
-
-        // Listen for device orientation changes
+        // Initialize device orientation handling
         if (window.DeviceOrientationEvent) {
-            window.addEventListener('deviceorientation', (e) => {
+            const throttledHandler = throttle((e) => {
                 if (typeof e.beta === 'number' && typeof e.gamma === 'number') {
-                    throttledHandleOrientation(e.beta, e.gamma);
+                    requestAnimationFrame(() => handleDeviceOrientation(e.beta, e.gamma));
                 }
-            });
+            }, 20); // Slightly reduced update rate for stability
+
+            window.addEventListener('deviceorientation', throttledHandler, { passive: true });
         }
+    </script>
