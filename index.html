@@ -397,25 +397,24 @@
     </div>
 
     <script>
-        function isMobileDevice() {
-            return (window.innerWidth <= 768 || window.innerHeight <= 768);
-        }
-
-        // Use let instead of const to avoid redeclaration errors
+        // Get text element
         let textElement = document.getElementById('text');
-        let moveRangeValue = isMobileDevice() ? 25 : 50;
+        const moveRangeValue = 50;
 
-        function handleMove(x, y) {
+        function handleDeviceOrientation(beta, gamma) {
             const { offsetWidth: width, offsetHeight: height } = document.body;
-            const scaleFactor = isMobileDevice() ? 0.5 : 1;
-
+            
             // Get updated text element in case it was dynamically added
             textElement = document.getElementById('text');
 
+            // Calculate movement based on device tilt
+            const x = (gamma / 90) * width + width / 2;
+            const y = (beta / 180) * height + height / 2;
+
             // Move text element with smooth transition
             if (textElement) {
-                const xMove = (x / width - 0.5) * moveRangeValue * scaleFactor;
-                const yMove = (y / height - 0.5) * moveRangeValue * scaleFactor;
+                const xMove = (x / width - 0.5) * moveRangeValue;
+                const yMove = (y / height - 0.5) * moveRangeValue;
                 textElement.style.transition = 'transform 0.3s ease-out';
                 textElement.style.transform = `translate(${-xMove}px, ${-yMove}px)`;
             }
@@ -423,8 +422,8 @@
             // Move images with parallax effect
             document.querySelectorAll('img, .photo').forEach((image, index) => {
                 const depth = 1 + (index * 0.1); // Creates depth effect
-                const imageXMove = (x / width - 0.5) * 25 * scaleFactor * depth;
-                const imageYMove = (y / height - 0.5) * 25 * scaleFactor * depth;
+                const imageXMove = (x / width - 0.5) * 25 * depth;
+                const imageYMove = (y / height - 0.5) * 25 * depth;
                 image.style.transition = 'transform 0.3s ease-out';
                 image.style.transform = `translate(${-imageXMove}px, ${-imageYMove}px)`;
             });
@@ -442,40 +441,16 @@
             }
         }
 
-        // Throttled handle move function
-        const throttledHandleMove = throttle(handleMove, 16); // ~60fps
+        // Throttled handle orientation function
+        const throttledHandleOrientation = throttle((beta, gamma) => {
+            handleDeviceOrientation(beta, gamma);
+        }, 16); // ~60fps
 
-        // Mouse move event
-        document.addEventListener('mousemove', (e) => {
-            throttledHandleMove(e.clientX, e.clientY);
-        });
-
-        // Touch move event for mobile with improved accuracy
-        document.addEventListener('touchmove', (e) => {
-            e.preventDefault();
-            const touch = e.touches[0];
-            const rect = document.body.getBoundingClientRect();
-            const x = touch.clientX - rect.left;
-            const y = touch.clientY - rect.top;
-            throttledHandleMove(x, y);
-        }, { passive: false });
-
-        // Handle initial touch with smooth start
-        document.addEventListener('touchstart', (e) => {
-            const touch = e.touches[0];
-            const rect = document.body.getBoundingClientRect();
-            const x = touch.clientX - rect.left;
-            const y = touch.clientY - rect.top;
-            throttledHandleMove(x, y);
-        });
-
-        // Handle device orientation for additional mobile interactivity
+        // Listen for device orientation changes
         if (window.DeviceOrientationEvent) {
             window.addEventListener('deviceorientation', (e) => {
                 if (e.beta && e.gamma) {
-                    const x = (e.gamma / 90) * window.innerWidth + window.innerWidth / 2;
-                    const y = (e.beta / 180) * window.innerHeight + window.innerHeight / 2;
-                    throttledHandleMove(x, y);
+                    throttledHandleOrientation(e.beta, e.gamma);
                 }
             });
         }
