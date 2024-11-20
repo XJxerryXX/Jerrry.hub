@@ -292,53 +292,87 @@
     <script>
         const text = document.getElementById('text');
         const subtitle = document.getElementById('subtitle');
-        const moveRange = 50;
+        const moveRange = 25; // Reduced movement range for better mobile experience
         let lastRaf;
 
+        // Function to check if device is mobile
+        function isMobileDevice() {
+            return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        }
+
+        // Function to update element sizes based on viewport
+        function updateElementSizes() {
+            const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
+            
+            // Adjust text sizes
+            if (text) {
+                text.style.fontSize = `${vw * 0.08}px`; // 8% of viewport width
+            }
+            if (subtitle) {
+                subtitle.style.fontSize = `${vw * 0.02}px`; // 2% of viewport width
+            }
+
+            // Adjust photo sizes
+            document.querySelectorAll('.photo').forEach(photo => {
+                photo.style.width = `${vw * 0.3}px`; // 30% of viewport width
+                photo.style.height = 'auto';
+            });
+
+            // Adjust Instagram icon size
+            const instagramIcon = document.querySelector('.instagram-icon');
+            if (instagramIcon) {
+                instagramIcon.style.width = `${vw * 0.1}px`; // 10% of viewport width
+                instagramIcon.style.height = 'auto';
+            }
+        }
+
+        // Initial size update and listen for resize
+        updateElementSizes();
+        window.addEventListener('resize', updateElementSizes);
+
         // Handle mouse movement on desktop
-        document.addEventListener('mousemove', (e) => {
-            const { offsetWidth: width, offsetHeight: height } = document.body;
-            const { clientX: x, clientY: y } = e;
-            
-            if (lastRaf) {
-                cancelAnimationFrame(lastRaf);
-            }
-            
-            lastRaf = requestAnimationFrame(() => {
-                moveElements((x / width - 0.5) * moveRange, (y / height - 0.5) * moveRange);
+        if (!isMobileDevice()) {
+            document.addEventListener('mousemove', (e) => {
+                const { offsetWidth: width, offsetHeight: height } = document.body;
+                const { clientX: x, clientY: y } = e;
+                
+                if (lastRaf) {
+                    cancelAnimationFrame(lastRaf);
+                }
+                
+                lastRaf = requestAnimationFrame(() => {
+                    moveElements((x / width - 0.5) * moveRange, (y / height - 0.5) * moveRange);
+                });
             });
-        });
+        }
 
-        // Handle device orientation on mobile
-        window.addEventListener('deviceorientation', (e) => {
-            // Convert device tilt to movement range
-            const xMove = (e.gamma / 90) * moveRange; // gamma is tilt left/right
-            const yMove = (e.beta / 90) * moveRange;  // beta is tilt front/back
-            
-            if (lastRaf) {
-                cancelAnimationFrame(lastRaf);
-            }
+        // Handle device orientation on mobile with reduced sensitivity
+        if (isMobileDevice()) {
+            window.addEventListener('deviceorientation', (e) => {
+                const xMove = (e.gamma / 180) * moveRange; // Reduced sensitivity
+                const yMove = (e.beta / 180) * moveRange;  // Reduced sensitivity
+                
+                if (lastRaf) {
+                    cancelAnimationFrame(lastRaf);
+                }
 
-            lastRaf = requestAnimationFrame(() => {
-                moveElements(xMove, yMove);
+                lastRaf = requestAnimationFrame(() => {
+                    moveElements(xMove, yMove);
+                });
             });
-        });
+        }
 
         // Helper function to move all elements
         function moveElements(xMove, yMove) {
-            // Apply transforms with hardware acceleration
             const transform = `translate3d(${xMove}px, ${yMove}px, 0)`;
             
-            // Synchronize movement for main text and subtitle
-            text.style.transform = transform;
-            subtitle.style.transform = transform;
+            if (text) text.style.transform = transform;
+            if (subtitle) subtitle.style.transform = transform;
     
-            // Synchronize photo movement with the same values
             document.querySelectorAll('.photo').forEach(photo => {
                 photo.style.transform = transform;
             });
     
-            // Instagram icon movement
             const instagramIcon = document.querySelector('.instagram-icon');
             if (instagramIcon) {
                 instagramIcon.style.transform = transform;
