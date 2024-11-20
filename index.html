@@ -256,30 +256,34 @@
     <div class="cursor"></div>
 
     <script>
-        const cursor = document.querySelector('.cursor');
-        let lastX = 0, lastY = 0;
+        // Check if device is mobile
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
-        document.addEventListener('mousemove', (e) => {
-            const x = e.clientX;
-            const y = e.clientY;
+        if (!isMobile) {
+            const cursor = document.querySelector('.cursor');
+            let lastX = 0, lastY = 0;
 
-            
-            cursor.style.left = `${x - cursor.offsetWidth / 1}px`;
-            cursor.style.top = `${y - cursor.offsetHeight / 1}px`;
+            document.addEventListener('mousemove', (e) => {
+                const x = e.clientX;
+                const y = e.clientY;
 
-            
-            const distX = Math.abs(x - lastX);
-            const distY = Math.abs(y - lastY);
-            const speed = Math.sqrt(distX * distX + distY * distY);
+                cursor.style.left = `${x - cursor.offsetWidth / 1}px`;
+                cursor.style.top = `${y - cursor.offsetHeight / 1}px`;
 
-            
-            const blurAmount = Math.min(speed / 20, 20);
-            cursor.style.filter = `blur(${blurAmount}px)`;
+                const distX = Math.abs(x - lastX);
+                const distY = Math.abs(y - lastY);
+                const speed = Math.sqrt(distX * distX + distY * distY);
 
-            
-            lastX = x;
-            lastY = y;
-        });
+                const blurAmount = Math.min(speed / 20, 20);
+                cursor.style.filter = `blur(${blurAmount}px)`;
+
+                lastX = x;
+                lastY = y;
+            });
+        } else {
+            // Hide cursor on mobile
+            document.querySelector('.cursor').style.display = 'none';
+        }
     </script>
 
 </body>
