@@ -401,53 +401,82 @@
             return (window.innerWidth <= 768 || window.innerHeight <= 768);
         }
 
-        const text = document.getElementById('text');
-        const moveRange = isMobileDevice() ? 25 : 50; // Reduced range for mobile
+        // Use let instead of const to avoid redeclaration errors
+        let textElement = document.getElementById('text');
+        let moveRangeValue = isMobileDevice() ? 25 : 50;
 
-        document.addEventListener('mousemove', (e) => {
+        function handleMove(x, y) {
             const { offsetWidth: width, offsetHeight: height } = document.body;
-            const { clientX: x, clientY: y } = e;
+            const scaleFactor = isMobileDevice() ? 0.5 : 1;
 
-            const scaleFactor = isMobileDevice() ? 0.5 : 1; // Scale factor for mobile
+            // Get updated text element in case it was dynamically added
+            textElement = document.getElementById('text');
 
-            // Move text element
-            const xMove = (x / width - 0.5) * moveRange * scaleFactor;
-            const yMove = (y / height - 0.5) * moveRange * scaleFactor;
-            if (text) {
-                text.style.transform = `translate(${-xMove}px, ${-yMove}px)`;
+            // Move text element with smooth transition
+            if (textElement) {
+                const xMove = (x / width - 0.5) * moveRangeValue * scaleFactor;
+                const yMove = (y / height - 0.5) * moveRangeValue * scaleFactor;
+                textElement.style.transition = 'transform 0.3s ease-out';
+                textElement.style.transform = `translate(${-xMove}px, ${-yMove}px)`;
             }
 
-            // Move h2 elements
-            document.querySelectorAll('h2').forEach(heading => {
-                const headingXMove = (x / width - 0.5) * 30 * scaleFactor;
-                const headingYMove = (y / height - 0.5) * 30 * scaleFactor;
-                heading.style.transform = `translate(${-headingXMove}px, ${-headingYMove}px)`;
-            });
-
-            // Move images
-            document.querySelectorAll('img, .photo').forEach(image => {
-                const imageXMove = (x / width - 0.5) * 25 * scaleFactor;
-                const imageYMove = (y / height - 0.5) * 25 * scaleFactor;
+            // Move images with parallax effect
+            document.querySelectorAll('img, .photo').forEach((image, index) => {
+                const depth = 1 + (index * 0.1); // Creates depth effect
+                const imageXMove = (x / width - 0.5) * 25 * scaleFactor * depth;
+                const imageYMove = (y / height - 0.5) * 25 * scaleFactor * depth;
+                image.style.transition = 'transform 0.3s ease-out';
                 image.style.transform = `translate(${-imageXMove}px, ${-imageYMove}px)`;
             });
+        }
 
-            // Move Instagram icon
-            const instagramIcon = document.querySelector('.instagram-icon');
-            if (instagramIcon) {
-                const iconXMove = (x / width - 0.5) * 30 * scaleFactor;
-                const iconYMove = (y / height - 0.5) * 30 * scaleFactor;
-                instagramIcon.style.transform = `translate(${-iconXMove}px, ${-iconYMove}px)`;
+        // Throttle function to limit update frequency
+        function throttle(func, limit) {
+            let inThrottle;
+            return function(...args) {
+                if (!inThrottle) {
+                    func.apply(this, args);
+                    inThrottle = true;
+                    setTimeout(() => inThrottle = false, limit);
+                }
             }
+        }
+
+        // Throttled handle move function
+        const throttledHandleMove = throttle(handleMove, 16); // ~60fps
+
+        // Mouse move event
+        document.addEventListener('mousemove', (e) => {
+            throttledHandleMove(e.clientX, e.clientY);
         });
 
-        // Add touch event support for mobile
+        // Touch move event for mobile with improved accuracy
         document.addEventListener('touchmove', (e) => {
             e.preventDefault();
             const touch = e.touches[0];
-            const mouseEvent = new MouseEvent('mousemove', {
-                clientX: touch.clientX,
-                clientY: touch.clientY
-            });
-            document.dispatchEvent(mouseEvent);
+            const rect = document.body.getBoundingClientRect();
+            const x = touch.clientX - rect.left;
+            const y = touch.clientY - rect.top;
+            throttledHandleMove(x, y);
         }, { passive: false });
+
+        // Handle initial touch with smooth start
+        document.addEventListener('touchstart', (e) => {
+            const touch = e.touches[0];
+            const rect = document.body.getBoundingClientRect();
+            const x = touch.clientX - rect.left;
+            const y = touch.clientY - rect.top;
+            throttledHandleMove(x, y);
+        });
+
+        // Handle device orientation for additional mobile interactivity
+        if (window.DeviceOrientationEvent) {
+            window.addEventListener('deviceorientation', (e) => {
+                if (e.beta && e.gamma) {
+                    const x = (e.gamma / 90) * window.innerWidth + window.innerWidth / 2;
+                    const y = (e.beta / 180) * window.innerHeight + window.innerHeight / 2;
+                    throttledHandleMove(x, y);
+                }
+            });
+        }
     </script>
