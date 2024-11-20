@@ -290,13 +290,20 @@
         const text = document.getElementById('text');
         const subtitle = document.getElementById('subtitle');
         const moveRange = 50;
+        let lastRaf;
 
         // Handle mouse movement on desktop
         document.addEventListener('mousemove', (e) => {
             const { offsetWidth: width, offsetHeight: height } = document.body;
             const { clientX: x, clientY: y } = e;
             
-            moveElements((x / width - 0.5) * moveRange, (y / height - 0.5) * moveRange);
+            if (lastRaf) {
+                cancelAnimationFrame(lastRaf);
+            }
+            
+            lastRaf = requestAnimationFrame(() => {
+                moveElements((x / width - 0.5) * moveRange, (y / height - 0.5) * moveRange);
+            });
         });
 
         // Handle device orientation on mobile
@@ -305,24 +312,33 @@
             const xMove = (e.gamma / 90) * moveRange; // gamma is tilt left/right
             const yMove = (e.beta / 90) * moveRange;  // beta is tilt front/back
             
-            moveElements(xMove, yMove);
+            if (lastRaf) {
+                cancelAnimationFrame(lastRaf);
+            }
+
+            lastRaf = requestAnimationFrame(() => {
+                moveElements(xMove, yMove);
+            });
         });
 
         // Helper function to move all elements
         function moveElements(xMove, yMove) {
+            // Apply transforms with hardware acceleration
+            const transform = `translate3d(${xMove}px, ${yMove}px, 0)`;
+            
             // Synchronize movement for main text and subtitle
-            text.style.transform = `translate(${xMove}px, ${yMove}px)`;
-            subtitle.style.transform = `translate(${xMove}px, ${yMove}px)`;
+            text.style.transform = transform;
+            subtitle.style.transform = transform;
     
             // Synchronize photo movement with the same values
             document.querySelectorAll('.photo').forEach(photo => {
-                photo.style.transform = `translate(${xMove}px, ${yMove}px)`;
+                photo.style.transform = transform;
             });
     
             // Instagram icon movement
             const instagramIcon = document.querySelector('.instagram-icon');
             if (instagramIcon) {
-                instagramIcon.style.transform = `translate(${xMove}px, ${yMove}px)`;
+                instagramIcon.style.transform = transform;
             }
         }
     </script>
