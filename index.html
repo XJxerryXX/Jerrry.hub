@@ -397,9 +397,41 @@
     </div>
 
     <script>
+        // Create and show mobile popup
+        if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+            const popup = document.createElement('div');
+            popup.style.position = 'fixed';
+            popup.style.top = '20px';
+            popup.style.left = '50%';
+            popup.style.transform = 'translateX(-50%)';
+            popup.style.backgroundColor = 'rgba(0,0,0,0.8)';
+            popup.style.color = 'white';
+            popup.style.padding = '15px 20px';
+            popup.style.borderRadius = '8px';
+            popup.style.zIndex = '9999';
+            popup.style.textAlign = 'center';
+            popup.innerText = 'Lepší požitek z této stránky budete mít na počítači';
+            
+            document.body.appendChild(popup);
+            
+            // Hide popup after 5 seconds
+            setTimeout(() => {
+                popup.style.transition = 'opacity 0.5s';
+                popup.style.opacity = '0';
+                setTimeout(() => popup.remove(), 500);
+            }, 5000);
+        }
+
         // Get text element
         let textElement = document.getElementById('text');
         const moveRangeValue = 50;
+        let lastX = 0;
+        let lastY = 0;
+        const smoothingFactor = 0.15; // Controls smoothing (0-1)
+
+        function lerp(start, end, factor) {
+            return start + (end - start) * factor;
+        }
 
         function handleDeviceOrientation(beta, gamma) {
             const { offsetWidth: width, offsetHeight: height } = document.body;
@@ -407,51 +439,67 @@
             // Get updated text element in case it was dynamically added
             textElement = document.getElementById('text');
 
-            // Calculate movement based on device tilt
-            const x = (gamma / 90) * width + width / 2;
-            const y = (beta / 180) * height + height / 2;
+            // Calculate movement based on device tilt with bounds checking
+            const gammaClamped = Math.max(-90, Math.min(90, gamma));
+            const betaClamped = Math.max(-180, Math.min(180, beta));
+            
+            const x = (gammaClamped / 90) * width + width / 2;
+            const y = (betaClamped / 180) * height + height / 2;
+
+            // Smooth out the movement using lerp
+            lastX = lerp(lastX, x, smoothingFactor);
+            lastY = lerp(lastY, y, smoothingFactor);
 
             // Move text element with smooth transition
             if (textElement) {
-                const xMove = (x / width - 0.5) * moveRangeValue;
-                const yMove = (y / height - 0.5) * moveRangeValue;
-                textElement.style.transition = 'transform 0.3s ease-out';
+                const xMove = (lastX / width - 0.5) * moveRangeValue;
+                const yMove = (lastY / height - 0.5) * moveRangeValue;
                 textElement.style.transform = `translate(${-xMove}px, ${-yMove}px)`;
             }
 
             // Move images with parallax effect
             document.querySelectorAll('img, .photo').forEach((image, index) => {
+                if (!image) return; // Skip if element is no longer in DOM
+                
                 const depth = 1 + (index * 0.1); // Creates depth effect
-                const imageXMove = (x / width - 0.5) * 25 * depth;
-                const imageYMove = (y / height - 0.5) * 25 * depth;
-                image.style.transition = 'transform 0.3s ease-out';
+                const imageXMove = (lastX / width - 0.5) * 25 * depth;
+                const imageYMove = (lastY / height - 0.5) * 25 * depth;
                 image.style.transform = `translate(${-imageXMove}px, ${-imageYMove}px)`;
             });
         }
 
-        // Throttle function to limit update frequency
+        // Throttle function with proper timing
         function throttle(func, limit) {
-            let inThrottle;
+            let lastFunc;
+            let lastRan;
             return function(...args) {
-                if (!inThrottle) {
+                if (!lastRan) {
                     func.apply(this, args);
-                    inThrottle = true;
-                    setTimeout(() => inThrottle = false, limit);
+                    lastRan = Date.now();
+                } else {
+                    clearTimeout(lastFunc);
+                    lastFunc = setTimeout(() => {
+                        if ((Date.now() - lastRan) >= limit) {
+                            func.apply(this, args);
+                            lastRan = Date.now();
+                        }
+                    }, limit - (Date.now() - lastRan));
                 }
             }
         }
 
         // Throttled handle orientation function
         const throttledHandleOrientation = throttle((beta, gamma) => {
-            handleDeviceOrientation(beta, gamma);
+            requestAnimationFrame(() => {
+                handleDeviceOrientation(beta, gamma);
+            });
         }, 16); // ~60fps
 
         // Listen for device orientation changes
         if (window.DeviceOrientationEvent) {
             window.addEventListener('deviceorientation', (e) => {
-                if (e.beta && e.gamma) {
+                if (typeof e.beta === 'number' && typeof e.gamma === 'number') {
                     throttledHandleOrientation(e.beta, e.gamma);
                 }
             });
         }
-    </script>
