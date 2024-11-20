@@ -412,14 +412,17 @@
             popup.style.textAlign = 'center';
             popup.innerText = 'Lepší požitek z této stránky budete mít na počítači';
             
-            document.body.appendChild(popup);
-            
-            // Hide popup after 5 seconds
-            setTimeout(() => {
-                popup.style.transition = 'opacity 0.5s';
-                popup.style.opacity = '0';
-                setTimeout(() => popup.remove(), 500);
-            }, 5000);
+            // Make sure popup is added after DOM is fully loaded
+            document.addEventListener('DOMContentLoaded', () => {
+                document.body.appendChild(popup);
+                
+                // Hide popup after 5 seconds
+                setTimeout(() => {
+                    popup.style.transition = 'opacity 0.5s';
+                    popup.style.opacity = '0';
+                    setTimeout(() => popup.remove(), 500);
+                }, 5000);
+            });
         }
 
         // Get text element
