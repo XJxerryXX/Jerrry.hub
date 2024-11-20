@@ -414,21 +414,21 @@
             const xMove = (x / width - 0.5) * moveRange * scaleFactor;
             const yMove = (y / height - 0.5) * moveRange * scaleFactor;
             if (text) {
-                text.style.transform = `translate(${xMove}px, ${yMove}px)`;
+                text.style.transform = `translate(${-xMove}px, ${-yMove}px)`;
             }
 
             // Move h2 elements
             document.querySelectorAll('h2').forEach(heading => {
                 const headingXMove = (x / width - 0.5) * 30 * scaleFactor;
                 const headingYMove = (y / height - 0.5) * 30 * scaleFactor;
-                heading.style.transform = `translate(${headingXMove}px, ${headingYMove}px)`;
+                heading.style.transform = `translate(${-headingXMove}px, ${-headingYMove}px)`;
             });
 
             // Move images
             document.querySelectorAll('img, .photo').forEach(image => {
                 const imageXMove = (x / width - 0.5) * 25 * scaleFactor;
                 const imageYMove = (y / height - 0.5) * 25 * scaleFactor;
-                image.style.transform = `translate(${imageXMove}px, ${imageYMove}px)`;
+                image.style.transform = `translate(${-imageXMove}px, ${-imageYMove}px)`;
             });
 
             // Move Instagram icon
@@ -436,7 +436,7 @@
             if (instagramIcon) {
                 const iconXMove = (x / width - 0.5) * 30 * scaleFactor;
                 const iconYMove = (y / height - 0.5) * 30 * scaleFactor;
-                instagramIcon.style.transform = `translate(${iconXMove}px, ${iconYMove}px)`;
+                instagramIcon.style.transform = `translate(${-iconXMove}px, ${-iconYMove}px)`;
             }
         });
 
