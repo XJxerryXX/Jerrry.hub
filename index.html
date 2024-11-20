@@ -289,95 +289,44 @@
 </body>
 </html>
 
-    <script>
-        const text = document.getElementById('text');
-        const subtitle = document.getElementById('subtitle');
-        const moveRange = 25; // Reduced movement range for better mobile experience
-        let lastRaf;
+<script>
+    const text = document.getElementById('text');
+    const moveRange = 50;
 
-        // Function to check if device is mobile
-        function isMobileDevice() {
-            return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    document.addEventListener('mousemove', (e) => {
+        const { offsetWidth: width, offsetHeight: height } = document.body;
+        const { clientX: x, clientY: y } = e;
+
+        // Move text element
+        const xMove = (x / width - 0.5) * moveRange;
+        const yMove = (y / height - 0.5) * moveRange;
+        if (text) {
+            text.style.transform = `translate(${xMove}px, ${yMove}px)`;
         }
 
-        // Function to update element sizes based on viewport
-        function updateElementSizes() {
-            const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
-            
-            // Adjust text sizes
-            if (text) {
-                text.style.fontSize = `${vw * 0.08}px`; // 8% of viewport width
-            }
-            if (subtitle) {
-                subtitle.style.fontSize = `${vw * 0.02}px`; // 2% of viewport width
-            }
+        // Move h2 elements
+        document.querySelectorAll('h2').forEach(heading => {
+            const headingXMove = (x / width - 0.5) * 30;
+            const headingYMove = (y / height - 0.5) * 30;
+            heading.style.transform = `translate(${headingXMove}px, ${headingYMove}px)`;
+        });
 
-            // Adjust photo sizes
-            document.querySelectorAll('.photo').forEach(photo => {
-                photo.style.width = `${vw * 0.3}px`; // 30% of viewport width
-                photo.style.height = 'auto';
-            });
+        // Move images
+        document.querySelectorAll('img, .photo').forEach(image => {
+            const imageXMove = (x / width - 0.5) * 25;
+            const imageYMove = (y / height - 0.5) * 25;
+            image.style.transform = `translate(${imageXMove}px, ${imageYMove}px)`;
+        });
 
-            // Adjust Instagram icon size
-            const instagramIcon = document.querySelector('.instagram-icon');
-            if (instagramIcon) {
-                instagramIcon.style.width = `${vw * 0.1}px`; // 10% of viewport width
-                instagramIcon.style.height = 'auto';
-            }
+        // Move Instagram icon
+        const instagramIcon = document.querySelector('.instagram-icon');
+        if (instagramIcon) {
+            const iconXMove = (x / width - 0.5) * 30;
+            const iconYMove = (y / height - 0.5) * 30;
+            instagramIcon.style.transform = `translate(${iconXMove}px, ${iconYMove}px)`;
         }
-
-        // Initial size update and listen for resize
-        updateElementSizes();
-        window.addEventListener('resize', updateElementSizes);
-
-        // Handle mouse movement on desktop
-        if (!isMobileDevice()) {
-            document.addEventListener('mousemove', (e) => {
-                const { offsetWidth: width, offsetHeight: height } = document.body;
-                const { clientX: x, clientY: y } = e;
-                
-                if (lastRaf) {
-                    cancelAnimationFrame(lastRaf);
-                }
-                
-                lastRaf = requestAnimationFrame(() => {
-                    moveElements((x / width - 0.5) * moveRange, (y / height - 0.5) * moveRange);
-                });
-            });
-        }
-
-        // Handle device orientation on mobile with reduced sensitivity
-        if (isMobileDevice()) {
-            window.addEventListener('deviceorientation', (e) => {
-                const xMove = (e.gamma / 180) * moveRange; // Reduced sensitivity
-                const yMove = (e.beta / 180) * moveRange;  // Reduced sensitivity
-                
-                if (lastRaf) {
-                    cancelAnimationFrame(lastRaf);
-                }
-
-                lastRaf = requestAnimationFrame(() => {
-                    moveElements(xMove, yMove);
-                });
-            });
-        }
-
-        // Helper function to move all elements
-        function moveElements(xMove, yMove) {
-            const transform = `translate3d(${xMove}px, ${yMove}px, 0)`;
-            
-            if (text) text.style.transform = transform;
-            if (subtitle) subtitle.style.transform = transform;
-    
-            document.querySelectorAll('.photo').forEach(photo => {
-                photo.style.transform = transform;
-            });
-    
-            const instagramIcon = document.querySelector('.instagram-icon');
-            if (instagramIcon) {
-                instagramIcon.style.transform = transform;
-            }
-        }
+    });
+</script>
     </script>
     </script>
     </html>
@@ -446,3 +395,59 @@
             });
         </script>
     </div>
+
+    <script>
+        function isMobileDevice() {
+            return (window.innerWidth <= 768 || window.innerHeight <= 768);
+        }
+
+        const text = document.getElementById('text');
+        const moveRange = isMobileDevice() ? 25 : 50; // Reduced range for mobile
+
+        document.addEventListener('mousemove', (e) => {
+            const { offsetWidth: width, offsetHeight: height } = document.body;
+            const { clientX: x, clientY: y } = e;
+
+            const scaleFactor = isMobileDevice() ? 0.5 : 1; // Scale factor for mobile
+
+            // Move text element
+            const xMove = (x / width - 0.5) * moveRange * scaleFactor;
+            const yMove = (y / height - 0.5) * moveRange * scaleFactor;
+            if (text) {
+                text.style.transform = `translate(${xMove}px, ${yMove}px)`;
+            }
+
+            // Move h2 elements
+            document.querySelectorAll('h2').forEach(heading => {
+                const headingXMove = (x / width - 0.5) * 30 * scaleFactor;
+                const headingYMove = (y / height - 0.5) * 30 * scaleFactor;
+                heading.style.transform = `translate(${headingXMove}px, ${headingYMove}px)`;
+            });
+
+            // Move images
+            document.querySelectorAll('img, .photo').forEach(image => {
+                const imageXMove = (x / width - 0.5) * 25 * scaleFactor;
+                const imageYMove = (y / height - 0.5) * 25 * scaleFactor;
+                image.style.transform = `translate(${imageXMove}px, ${imageYMove}px)`;
+            });
+
+            // Move Instagram icon
+            const instagramIcon = document.querySelector('.instagram-icon');
+            if (instagramIcon) {
+                const iconXMove = (x / width - 0.5) * 30 * scaleFactor;
+                const iconYMove = (y / height - 0.5) * 30 * scaleFactor;
+                instagramIcon.style.transform = `translate(${iconXMove}px, ${iconYMove}px)`;
+            }
+        });
+
+        // Add touch event support for mobile
+        document.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const mouseEvent = new MouseEvent('mousemove', {
+                clientX: touch.clientX,
+                clientY: touch.clientY
+            });
+            document.dispatchEvent(mouseEvent);
+        }, { passive: false });
+    </script>
