@@ -80,22 +80,23 @@
             margin: 0;
             font-size: 4rem;
             color: transparent;
-            background: linear-gradient(135deg, 
+            background: linear-gradient(135deg,
                 #000000 0%,
-                #333333 25%,
+                #333333 20%,
                 #ffffff 50%,
-                #333333 75%,
+                #333333 80%,
                 #000000 100%
             );
             -webkit-background-clip: text;
             transition: transform 0.1s ease, background-position 0.2s ease;
             position: relative;
-            background-size: 300%;
+            background-size: 200%;
             text-shadow: 
-                2px 2px 4px rgba(0,0,0,0.3),
-                -2px -2px 4px rgba(255,255,255,0.3),
-                0 15px 25px rgba(0,0,0,0.2);
-            animation: gradientMove 8s ease infinite;
+                3px 3px 6px rgba(0,0,0,0.4),
+                -3px -3px 6px rgba(255,255,255,0.4),
+                0 15px 30px rgba(0,0,0,0.3);
+            animation: gradientMove 4s ease infinite;
+            letter-spacing: 2px;
         }
 
         @keyframes gradientMove {
@@ -327,170 +328,238 @@
         }
     });
 </script>
-    </script>
-    </script>
-    </html>
-    <style>
-        .spiral-container {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 100vw;
-            height: 100vh;
-            pointer-events: none;
-            z-index: -1;
+</html>
+<style>
+    .spiral-container {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 100vw;
+        height: 100vh;
+        pointer-events: none;
+        z-index: -1;
+        transition: transform 0.3s ease-out;
+        will-change: transform;
+    }
+
+    .spiral {
+        position: absolute;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 50%;
+        animation: spiral-rotate infinite linear;
+        box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);
+        background: radial-gradient(circle at center, 
+            transparent 0%,
+            rgba(255, 255, 255, 0.02) 50%,
+            transparent 100%
+        );
+        transition: transform 0.2s ease-out;
+        will-change: transform;
+        transform: translate3d(0, 0, 0);
+        backface-visibility: hidden;
+    }
+
+    @keyframes spiral-rotate {
+        from {
+            transform: translate(-50%, -50%) rotate(0deg) scale(1);
         }
-
-        .spiral {
-            position: absolute;
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            animation: spiral-rotate infinite linear;
+        to {
+            transform: translate(-50%, -50%) rotate(360deg) scale(1);
         }
+    }
 
-        @keyframes spiral-rotate {
-            from {
-                transform: translate(-50%, -50%) rotate(0deg);
-            }
-            to {
-                transform: translate(-50%, -50%) rotate(360deg);
-            }
-        }
-    </style>
+    .spiral:hover {
+        transform: translate(-50%, -50%) scale(1.05);
+    }
 
-    <div class="spiral-container">
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                const container = document.querySelector('.spiral-container');
-                const spiralCount = 15;
-                
-                function getRandomSpeed() {
-                    return Math.random() * 15 + 5; // Random speed between 5-20 seconds
-                }
-                
-                function updateSpiralSpeed(spiral) {
-                    const newDuration = getRandomSpeed();
-                    spiral.style.animationDuration = `${newDuration}s`;
-                }
-                
-                for (let i = 0; i < spiralCount; i++) {
-                    const spiral = document.createElement('div');
-                    spiral.classList.add('spiral');
-                    
-                    const size = (i + 1) * 100;
-                    spiral.style.width = size + 'px';
-                    spiral.style.height = size + 'px';
-                    spiral.style.left = '50%';
-                    spiral.style.top = '50%';
-                    
-                    // Initial random speed
-                    updateSpiralSpeed(spiral);
-                    
-                    // Update speed periodically
-                    setInterval(() => updateSpiralSpeed(spiral), getRandomSpeed() * 1000);
-                    
-                    container.appendChild(spiral);
-                }
-            });
-        </script>
-    </div>
+    .wiggle-x {
+        animation: wiggleX 0.5s ease-in-out;
+    }
 
+    .wiggle-y {
+        animation: wiggleY 0.5s ease-in-out;
+    }
+
+    @keyframes wiggleX {
+        0%, 100% { transform: translate(-50%, -50%) skewX(0deg); }
+        25% { transform: translate(-50%, -50%) skewX(2deg); }
+        75% { transform: translate(-50%, -50%) skewX(-2deg); }
+    }
+
+    @keyframes wiggleY {
+        0%, 100% { transform: translate(-50%, -50%) skewY(0deg); }
+        25% { transform: translate(-50%, -50%) skewY(2deg); }
+        75% { transform: translate(-50%, -50%) skewY(-2deg); }
+    }
+</style>
+
+<div class="spiral-container">
     <script>
-        // Mobile device detection and popup
-        if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-            document.addEventListener('DOMContentLoaded', () => {
-                const popup = document.createElement('div');
-                Object.assign(popup.style, {
-                    position: 'fixed',
-                    top: '20px',
-                    left: '50%',
-                    transform: 'translateX(-50%)',
-                    backgroundColor: 'rgba(0,0,0,0.8)',
-                    color: 'white',
-                    padding: '15px 20px',
-                    borderRadius: '8px',
-                    zIndex: '9999',
-                    textAlign: 'center'
-                });
-                popup.innerText = 'Lepší požitek z této stránky budete mít na počítači';
-                
-                document.body.appendChild(popup);
-                setTimeout(() => {
-                    popup.style.transition = 'opacity 0.5s';
-                    popup.style.opacity = '0';
-                    setTimeout(() => popup.remove(), 500);
-                }, 5000);
-            });
-        }
-
-        // Movement tracking variables
-        let textElement = document.getElementById('text');
-        const moveRangeValue = 25; // Reduced range for more stability
-        let lastX = window.innerWidth / 2;
-        let lastY = window.innerHeight / 2;
-        const smoothingFactor = 0.08; // Reduced for more stability
-
-        // Smooth interpolation
-        function lerp(start, end, factor) {
-            return start + (end - start) * factor;
-        }
-
-        // Main orientation handler with improved stability
-        function handleDeviceOrientation(beta, gamma) {
-            const width = window.innerWidth;
-            const height = window.innerHeight;
-            textElement = document.getElementById('text');
-
-            // Clamp values with tighter bounds for more stability
-            const gammaClamped = Math.max(-45, Math.min(45, gamma));
-            const betaClamped = Math.max(-45, Math.min(45, beta));
+        document.addEventListener('DOMContentLoaded', function() {
+            const container = document.querySelector('.spiral-container');
+            const spiralCount = 12; // Reduced number of spirals
             
-            // Calculate position with reduced sensitivity
-            const x = (gammaClamped / 45) * width + width / 2;
-            const y = (betaClamped / 45) * height + height / 2;
-
-            // Apply stronger smoothing
-            lastX = lerp(lastX, x, smoothingFactor);
-            lastY = lerp(lastY, y, smoothingFactor);
-
-            // Move text with reduced range
-            if (textElement) {
-                const xMove = (lastX / width - 0.5) * moveRangeValue;
-                const yMove = (lastY / height - 0.5) * moveRangeValue;
-                textElement.style.transform = `translate(${-xMove}px, ${-yMove}px)`;
+            function getRandomSpeed() {
+                return Math.random() * 20 + 20; // More consistent speeds
             }
-
-            // Move images with reduced parallax effect
-            document.querySelectorAll('img, .photo').forEach((image, index) => {
-                if (!image) return;
-                const depth = 1 + (index * 0.05); // Reduced depth effect
-                const imageXMove = (lastX / width - 0.5) * 15 * depth; // Reduced movement
-                const imageYMove = (lastY / height - 0.5) * 15 * depth;
-                image.style.transform = `translate(${-imageXMove}px, ${-imageYMove}px)`;
-            });
-        }
-
-        // Improved throttle function
-        const throttle = (func, limit) => {
-            let inThrottle;
-            return (...args) => {
-                if (!inThrottle) {
-                    func.apply(this, args);
-                    inThrottle = true;
-                    setTimeout(() => inThrottle = false, limit);
-                }
+            
+            function updateSpiralSpeed(spiral) {
+                const newDuration = getRandomSpeed();
+                spiral.style.animationDuration = `${newDuration}s`;
             }
-        }
-
-        // Initialize device orientation handling
-        if (window.DeviceOrientationEvent) {
-            const throttledHandler = throttle((e) => {
-                if (typeof e.beta === 'number' && typeof e.gamma === 'number') {
-                    requestAnimationFrame(() => handleDeviceOrientation(e.beta, e.gamma));
+            
+            // Create spirals once and store them in a fragment
+            const fragment = document.createDocumentFragment();
+            
+            for (let i = 0; i < spiralCount; i++) {
+                const spiral = document.createElement('div');
+                spiral.classList.add('spiral');
+                
+                const size = (i + 1) * 100; // Larger increments = fewer elements
+                spiral.style.width = size + 'px';
+                spiral.style.height = size + 'px';
+                spiral.style.left = '50%';
+                spiral.style.top = '50%';
+                
+                if (i % 2 === 0) {
+                    spiral.style.animationDirection = 'reverse';
                 }
-            }, 20); // Slightly reduced update rate for stability
-
-            window.addEventListener('deviceorientation', throttledHandler, { passive: true });
-        }
+                
+                updateSpiralSpeed(spiral);
+                
+                // Update speeds less frequently
+                setInterval(() => updateSpiralSpeed(spiral), 30000);
+                
+                fragment.appendChild(spiral);
+            }
+            
+            container.appendChild(fragment);
+        });
     </script>
+</div>
+
+<script>
+    // Mobile device detection and popup
+    if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+        document.addEventListener('DOMContentLoaded', () => {
+            const popup = document.createElement('div');
+            Object.assign(popup.style, {
+                position: 'fixed',
+                top: '20px',
+                left: '50%',
+                transform: 'translateX(-50%)',
+                backgroundColor: 'rgba(0,0,0,0.8)',
+                color: 'white',
+                padding: '15px 20px',
+                borderRadius: '8px',
+                zIndex: '9999',
+                textAlign: 'center'
+            });
+            popup.innerText = 'Lepší požitek z této stránky budete mít na počítači';
+            
+            document.body.appendChild(popup);
+            setTimeout(() => popup.remove(), 5000);
+        });
+    }
+
+    // Movement tracking with requestAnimationFrame
+    let textElement = document.getElementById('text');
+    const moveRangeValue = 20; // Further reduced range
+    let lastX = window.innerWidth / 2;
+    let lastY = window.innerHeight / 2;
+    const smoothingFactor = 0.1;
+
+    function lerp(start, end, factor) {
+        return start + (end - start) * factor;
+    }
+
+    let ticking = false;
+    function handleDeviceOrientation(beta, gamma) {
+        if (!ticking) {
+            requestAnimationFrame(() => {
+                const width = window.innerWidth;
+                const height = window.innerHeight;
+                textElement = document.getElementById('text');
+
+                const gammaClamped = Math.max(-45, Math.min(45, gamma));
+                const betaClamped = Math.max(-45, Math.min(45, beta));
+                
+                const x = (gammaClamped / 45) * width + width / 2;
+                const y = (betaClamped / 45) * height + height / 2;
+
+                lastX = lerp(lastX, x, smoothingFactor);
+                lastY = lerp(lastY, y, smoothingFactor);
+
+                if (textElement) {
+                    const xMove = (lastX / width - 0.5) * moveRangeValue;
+                    const yMove = (lastY / height - 0.5) * moveRangeValue;
+                    textElement.style.transform = `translate3d(${-xMove}px, ${-yMove}px, 0)`;
+                }
+
+                const images = document.querySelectorAll('img, .photo');
+                for (let i = 0; i < images.length; i++) {
+                    const image = images[i];
+                    if (!image) continue;
+                    const depth = 1 + (i * 0.03);
+                    const imageXMove = (lastX / width - 0.5) * 10 * depth;
+                    const imageYMove = (lastY / height - 0.5) * 10 * depth;
+                    image.style.transform = `translate3d(${-imageXMove}px, ${-imageYMove}px, 0)`;
+                }
+                
+                ticking = false;
+            });
+            ticking = true;
+        }
+    }
+
+    if (window.DeviceOrientationEvent) {
+        window.addEventListener('deviceorientation', (e) => {
+            if (typeof e.beta === 'number' && typeof e.gamma === 'number') {
+                handleDeviceOrientation(e.beta, e.gamma);
+            }
+        }, { passive: true });
+    }
+</script>
+<style>
+    @keyframes spiral-spin {
+        0%, 100% {
+            transform: translate(-50%, -50%) rotate(0deg) scale(0.9);
+            opacity: 0.2;
+        }
+    }
+
+    img {
+        will-change: transform;
+        backface-visibility: hidden;
+        transform: translateZ(0);
+        image-rendering: auto;
+    }
+
+    * {
+        will-change: auto;
+    }
+
+    .photo, img {
+        contain: layout paint style;
+    }
+
+    @media (max-width: 768px) {
+        img, .photo {
+            transform: none !important;
+        }
+        
+        * {
+            will-change: auto;
+        }
+        
+        .spiral-container {
+            display: none;
+        }
+    }
+
+    .photo, img, .text-element {
+        transform: translate3d(0, 0, 0);
+        z-index: 1;
+        contain: paint layout style;
+    }
