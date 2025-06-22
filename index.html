@@ -20,6 +20,7 @@
             padding: 30px;
             border-radius: 15px;
             box-shadow: 0 0 20px rgba(0, 120, 215, 0.3);
+            position: relative;
         }
         h1 {
             color: #0078d7;
@@ -110,6 +111,77 @@
             max-height: 150px;
             overflow-y: auto;
         }
+        
+        /* Nové styly pro modální okno */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background-color: #252525;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 500px;
+            width: 90%;
+            border-top: 5px solid #0078d7;
+            animation: modalFadeIn 0.3s;
+        }
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .modal-buttons {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+        .modal-btn {
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .modal-btn-primary {
+            background-color: #0078d7;
+            color: white;
+        }
+        .modal-btn-secondary {
+            background-color: #333;
+            color: white;
+        }
+        .connection-steps {
+            text-align: left;
+            margin: 20px 0;
+        }
+        .connection-step {
+            display: flex;
+            margin-bottom: 15px;
+            align-items: flex-start;
+        }
+        .step-number {
+            background-color: #0078d7;
+            color: white;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 10px;
+            flex-shrink: 0;
+        }
+        .hidden {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -154,17 +226,62 @@
         </div>
     </div>
 
+    <!-- Nové modální okno pro připojení zařízení -->
+    <div id="deviceModal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h2 style="margin-top: 0; color: #0078d7;">Připojte Xbox kontrolér</h2>
+            <p>Pro použití této aplikace potřebujete připojený Xbox kontrolér.</p>
+            
+            <div class="connection-steps">
+                <div class="connection-step">
+                    <div class="step-number">1</div>
+                    <div>
+                        <strong>Připojte přes USB:</strong><br>
+                        Zapojte kabel USB do kontroléru a počítače
+                    </div>
+                </div>
+                <div class="connection-step">
+                    <div class="step-number">2</div>
+                    <div>
+                        <strong>Připojte přes Bluetooth:</strong><br>
+                        1. Podržte tlačítko připojení na kontroléru (3 vteřiny)<br>
+                        2. Přidejte zařízení v nastavení Bluetooth vašeho počítače
+                    </div>
+                </div>
+                <div class="connection-step">
+                    <div class="step-number">3</div>
+                    <div>
+                        <strong>Aktivujte kontrolér:</strong><br>
+                        Po připojení zmáčkněte libovolné tlačítko na kontroléru
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal-buttons">
+                <button class="modal-btn modal-btn-primary" id="refreshBtn">Zkontrolovat znovu</button>
+                <button class="modal-btn modal-btn-secondary" id="closeModalBtn">Použít bez kontroléru</button>
+            </div>
+            
+            <p id="connectionStatus" style="margin-top: 20px; font-style: italic;"></p>
+        </div>
+    </div>
+
     <script>
         // Globální proměnné
         let controller = null;
         let vibrationActive = false;
         let lastVibrationTime = 0;
+        let modalTimeout = null;
         
         // Prvky DOM
         const statusElement = document.getElementById('status');
         const vibrationDisplay = document.getElementById('vibrationDisplay');
         const errorElement = document.getElementById('errorMsg');
         const debugElement = document.getElementById('debugInfo');
+        const deviceModal = document.getElementById('deviceModal');
+        const refreshBtn = document.getElementById('refreshBtn');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const connectionStatus = document.getElementById('connectionStatus');
         
         // Tlačítka
         document.getElementById('testBtn').addEventListener('click', () => {
@@ -179,10 +296,18 @@
             pulseVibration(0.75, 300);
         });
         
+        // Modal tlačítka
+        refreshBtn.addEventListener('click', checkForController);
+        closeModalBtn.addEventListener('click', () => {
+            hideModal();
+            updateStatus("Používáte aplikaci bez připojeného kontroléru. Některé funkce nemusí fungovat.");
+        });
+        
         // Kontrola podpory Gamepad API
         if (!navigator.getGamepads) {
             showError("Váš prohlížeč nepodporuje Gamepad API. Doporučujeme použít Microsoft Edge nebo Google Chrome.");
             updateStatus("Nepodporovaný prohlížeč");
+            showModal();
             return;
         }
         
@@ -191,6 +316,7 @@
             controller = e.gamepad;
             updateStatus(`Kontrolér připojen: ${controller.id}`);
             logDebug(`Gamepad připojen: ${JSON.stringify(controller, null, 2)}`);
+            hideModal();
             
             // Zkontrolujeme podporu vibrací
             checkVibrationSupport();
@@ -205,49 +331,77 @@
                 controller = null;
                 stopVibration();
                 updateStatus("Kontrolér odpojen. Připojte Xbox kontrolér.");
+                showModal();
             }
         });
+        
+        // Funkce pro zobrazení modálního okna
+        function showModal() {
+            deviceModal.classList.remove('hidden');
+            connectionStatus.textContent = "Čekám na připojení kontroléru...";
+            modalTimeout = setTimeout(() => {
+                if (!controller) {
+                    connectionStatus.textContent = "Kontrolér nebyl detekován. Zkontrolujte připojení.";
+                }
+            }, 5000);
+        }
+        
+        function hideModal() {
+            deviceModal.classList.add('hidden');
+            if (modalTimeout) {
+                clearTimeout(modalTimeout);
+                modalTimeout = null;
+            }
+        }
+        
+        // Funkce pro kontrolu připojení kontroléru
+        function checkForController() {
+            const gamepads = navigator.getGamepads();
+            const xboxPad = Array.from(gamepads).find(g => g && (g.id.includes("Xbox") || g.mapping === "standard"));
+            
+            if (xboxPad) {
+                controller = xboxPad;
+                updateStatus(`Kontrolér připojen: ${controller.id}`);
+                logDebug(`Detekován připojený gamepad: ${controller.id}`);
+                hideModal();
+                checkVibrationSupport();
+                requestAnimationFrame(updateLoop);
+            } else {
+                connectionStatus.textContent = "Žádný Xbox kontrolér nebyl detekován. Zkuste to znovu.";
+                logDebug("Žádný kompatibilní kontrolér nebyl nalezen");
+            }
+        }
         
         // Hlavní smyčka aktualizace
         function updateLoop() {
             if (!controller) {
-                // Zkusíme najít připojený kontrolér
-                const gamepads = navigator.getGamepads();
-                for (let i = 0; i < gamepads.length; i++) {
-                    if (gamepads[i] && (gamepads[i].id.includes("Xbox") || gamepads[i].mapping === "standard")) {
-                        controller = gamepads[i];
-                        updateStatus(`Kontrolér připojen: ${controller.id}`);
-                        checkVibrationSupport();
-                        break;
-                    }
+                requestAnimationFrame(updateLoop);
+                return;
+            }
+            
+            // Aktualizace stavu spouští
+            const ltValue = getTriggerValue(controller, 'left');
+            const rtValue = getTriggerValue(controller, 'right');
+            
+            document.getElementById('ltTrigger').style.height = `${ltValue * 100}%`;
+            document.getElementById('rtTrigger').style.height = `${rtValue * 100}%`;
+            
+            // Výpočet intenzity vibrací
+            const vibrationIntensity = Math.max(ltValue, rtValue);
+            
+            // Aktualizace vibrací pouze pokud je změna větší než 5%
+            if (Math.abs(vibrationIntensity - currentVibrationLevel) > 0.05) {
+                currentVibrationLevel = vibrationIntensity;
+                
+                if (vibrationIntensity > 0.05) { // Malý threshold proti chvění
+                    applyVibration(vibrationIntensity);
+                } else {
+                    stopVibration();
                 }
             }
             
-            if (controller) {
-                // Aktualizace stavu spouští
-                const ltValue = getTriggerValue(controller, 'left');
-                const rtValue = getTriggerValue(controller, 'right');
-                
-                document.getElementById('ltTrigger').style.height = `${ltValue * 100}%`;
-                document.getElementById('rtTrigger').style.height = `${rtValue * 100}%`;
-                
-                // Výpočet intenzity vibrací
-                const vibrationIntensity = Math.max(ltValue, rtValue);
-                
-                // Aktualizace vibrací pouze pokud je změna větší než 5%
-                if (Math.abs(vibrationIntensity - currentVibrationLevel) > 0.05) {
-                    currentVibrationLevel = vibrationIntensity;
-                    
-                    if (vibrationIntensity > 0.05) { // Malý threshold proti chvění
-                        applyVibration(vibrationIntensity);
-                    } else {
-                        stopVibration();
-                    }
-                }
-                
-                // Aktualizace displeje
-                updateVibrationDisplay(vibrationIntensity);
-            }
+            // Aktualizace displeje
+            updateVibrationDisplay(vibrationIntensity);
             
             requestAnimationFrame(updateLoop);
         }
@@ -415,14 +569,15 @@
             updateStatus("Připojte Xbox kontrolér a zmáčkněte libovolné tlačítko");
             logDebug("Stránka načtena - čekám na kontrolér...");
             
-            // Některé prohlížeče potřebují aktivaci
-            if (navigator.getGamepads().some(g => g)) {
-                controller = navigator.getGamepads()[0];
+            // Zobrazíme modální okno, pokud není kontrolér připojen
+            if (!Array.from(navigator.getGamepads()).some(g => g && (g.id.includes("Xbox") || g.mapping === "standard"))) {
+                showModal();
+            } else {
+                controller = Array.from(navigator.getGamepads()).find(g => g && (g.id.includes("Xbox") || g.mapping === "standard"));
                 updateStatus(`Kontrolér připojen: ${controller.id}`);
                 checkVibrationSupport();
+                requestAnimationFrame(updateLoop);
             }
-            
-            requestAnimationFrame(updateLoop);
         });
     </script>
 </body>
